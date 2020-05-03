@@ -10,26 +10,18 @@ const {
 	auth,
 	logout,
 	logoutAll } = require("./controllers/authController");
-const {
-	readUsers,
-	readUser,
-	updateUser,
-	createUser,
-	readProfile } = require("./controllers/userController");
-const {
-	readTours,
-	readTour,
-	createTour,
-	updateTour,
-	deleteTour } = require("./controllers/tourController");
-const {
-	readReviews,
-	readReview,
-	updateReview,
-	deleteReview,
-	createReview } = require("./controllers/reviewController");
 
-const checkTour = require("./middlewares/checkTour");
+
+
+
+// import routers
+const tourRouter = require("./routers/tourRouter");
+const reviewRouter = require("./routers/reviewRouter");
+const userRouter = require("./routers/userRouter");
+
+
+
+
 
 mongoose.connect(process.env.DB, {
 	useNewUrlParser: true,
@@ -45,50 +37,18 @@ app.use(router);
 
 router.route("/").get((req, res) => { res.send("OK") });
 
-router
-	.route("/tours")
-	.get(readTours)
-	.post(auth, createTour)
-
-router
-	.route("/tours/:id")
-	.get(auth, readTour)
-	.patch(auth, updateTour)
-	.delete(auth, deleteTour);
+// tour Router
+router.use("/tours", tourRouter);
+router.use("/tours/:tid/reviews", reviewRouter);
+router.use("/users", userRouter)
 
 
-
-// reviews
-
-router
-	.route("/reviews")
-	.get(checkTour, readReviews)
-	.post(auth, checkTour, createReview)
-
-router
-	.route("/reviews/:id")
-	.get(readReview)
-	.patch(auth, updateReview)
-	.delete(auth, deleteReview)
+router.post("/auth/login", login);
+router.get("/auth/logout/all", auth, logoutAll);
+router.get("/auth/logout", auth, logout);
 
 
-// users 
-router
-	.route("/users/me")
-	.get(auth, readProfile)
-	.patch(auth, updateUser)
 
-router.post("/login", login);
-router.get("/logout", auth, logout);
-router.get("/logout/all", auth, logoutAll);
-
-
-router
-	.route("/users")
-	.get(readUsers)
-	.post(createUser);
-
-router.route("/users/:id").get(readUser)
 
 
 // const Cate = require("./models/category.js");

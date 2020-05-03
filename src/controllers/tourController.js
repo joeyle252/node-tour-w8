@@ -2,6 +2,7 @@ const Tour = require("../models/tour");
 
 
 exports.readTours = async function (req, res) {
+	
 	try {
 		const tours = await Tour.find({}).lean();
 		res.json({ status: "success", data: tours });

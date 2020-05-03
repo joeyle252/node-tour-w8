@@ -39,7 +39,7 @@ reviewSchema.methods.toJSON = function () {
 reviewSchema.pre(/^find/, function (next) {
   this
     .populate("user", "-__v -tokens -password -createdAt -updatedAt")
-    .populate("tour", "-guides -organizer -description -createdAt -__v")
+    // .populate("tour", "-guides -organizer -description -createdAt -__v")
 
   next();
 })
