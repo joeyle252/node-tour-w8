@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const User = require("./user");
 const ObjectId = require('mongoose').Types.ObjectId;
+const Review = require("./review");
+
 
 const tourSchema = new mongoose.Schema({
   title: {
@@ -85,7 +87,10 @@ tourSchema.pre(/^find/, function (next) {
 });
 
 
-
+tourSchema.post(/^findOneAndDelete/, async function () {
+  const id = this._conditions._id
+  await Review.deleteMany({ tour: id })
+})
 
 tourSchema.methods.toJSON = function () {
   const object = this.toObject();

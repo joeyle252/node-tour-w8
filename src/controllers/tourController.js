@@ -1,8 +1,9 @@
 const Tour = require("../models/tour");
+const { deleteOne, updateOne } = require("./factories");
 
 
 exports.readTours = async function (req, res) {
-	
+
 	try {
 		const tours = await Tour.find({}).lean();
 		res.json({ status: "success", data: tours });
@@ -31,11 +32,6 @@ exports.createTour = async function (req, res) {
 	};
 };
 
-exports.updateTour = async function (req, res) {
-	res.send("ok")
-};
+exports.updateTour = updateOne(Tour);
 
-exports.deleteTour = async function (req, res) {
-	res.send("ok");
-};
-
+exports.deleteTour = deleteOne(Tour)

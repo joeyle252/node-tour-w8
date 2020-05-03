@@ -1,6 +1,5 @@
 const Review = require("../models/review");
-const ObjectId = require('mongoose').Types.ObjectId;
-
+const { deleteOne } = require("./factories");
 
 exports.createReview = async function (req, res) {
   try {    
@@ -27,7 +26,9 @@ exports.readReviews = async function (req, res) {
 
 exports.readReview = async function (req, res) {
   try {
-    const review = await Review.findById(req.params.id).exec();
+    const review = await Review.findById(req.params.id);
+    if(!review) res.status(404).json({ status: "fail", message: "review not found" });
+
     res.json({ status: "success", data: review });
   } catch (error) {
     res.status(400).json({ status: "fail", message: error.message });
@@ -43,11 +44,5 @@ exports.updateReview = async function (req, res) {
 };
 
 
-exports.deleteReview = async function (req, res) {
-  try {
-
-  } catch (error) {
-
-  }
-};
+exports.deleteReview = deleteOne(Review);
 

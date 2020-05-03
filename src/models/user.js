@@ -51,6 +51,13 @@ userSchema.pre("save", async function (next) {
 	next();
 });
 
+userSchema.pre("findOneAndUpdate", async function (next) {
+	if (!this._update.password) return next();
+	this._update.password = await bcrypt.hash(this._update.password, saltRounds);
+	next();
+});
+
+
 userSchema.methods.generateToken = async function () {
 	const user = this;
 	const token = jwt.sign({ id: user._id }, process.env.secret, { expiresIn: '7d' });

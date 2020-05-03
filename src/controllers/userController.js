@@ -1,4 +1,6 @@
 const User = require("../models/user");
+const {updateOne} = require("./factories");
+
 
 exports.readUsers = async function (req, res) {
 	const users = await User.find({}).select("-createdAt -updatedAt -tokens");
@@ -9,9 +11,8 @@ exports.readUser = async function (req, res) {
 	res.send("ok")
 };
 
-exports.updateUser = async function (req, res) {
-	res.send("ok")
-};
+exports.updateUser = updateOne(User);
+
 
 
 exports.readProfile = async function (req, res) {
