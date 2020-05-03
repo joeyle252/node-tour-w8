@@ -5,30 +5,31 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 require("dotenv").config({ path: ".env" });
 
-const { 
-	login, 
-	auth, 
-	logout, 
+const {
+	login,
+	auth,
+	logout,
 	logoutAll } = require("./controllers/authController");
-const { 
-	readUsers, 
-	readUser, 
-	updateUser, 
-	createUser, 
+const {
+	readUsers,
+	readUser,
+	updateUser,
+	createUser,
 	readProfile } = require("./controllers/userController");
-const { 
-	readTours, 
-	readTour, 
-	createTour, 
-	updateTour, 
+const {
+	readTours,
+	readTour,
+	createTour,
+	updateTour,
 	deleteTour } = require("./controllers/tourController");
-const { 
-	readReviews, 
-	readReview, 
-	updateReview, 
-	deleteReview, 
+const {
+	readReviews,
+	readReview,
+	updateReview,
+	deleteReview,
 	createReview } = require("./controllers/reviewController");
 
+const checkTour = require("./middlewares/checkTour");
 
 mongoose.connect(process.env.DB, {
 	useNewUrlParser: true,
@@ -58,7 +59,6 @@ router
 
 
 // reviews
-const checkTour = require("./middlewares/checkTour");
 
 router
 	.route("/reviews")
