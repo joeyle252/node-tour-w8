@@ -51,7 +51,6 @@ userSchema.pre("save", async function (next) { // this here = doc
 });
 
 userSchema.pre("findOneAndUpdate", async function (next) { // this here is not a doc. this here = query
-	console.log(this)
 	if (!this._update.password) return next();
 	this._update.password = await bcrypt.hash(this._update.password, saltRounds);
 	next();

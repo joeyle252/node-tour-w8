@@ -4,9 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
+    "test": "env-cmd -f ./test.env jest --watchAll",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "keywords": [],
   "author": "",
@@ -15,11 +18,16 @@
     "bcrypt": "^3.0.7",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
+    "env-cmd": "^10.1.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.5.2",
     "mongoose": "^5.8.10",
     "nodemon": "^2.0.2",
     "validator": "^12.2.0"
+  },
+  "devDependencies": {
+    "jest": "^26.0.1",
+    "supertest": "^4.0.2"
   }
 }

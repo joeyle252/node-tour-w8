@@ -3,9 +3,9 @@ const app = express();
 const router = new express.Router();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-require("dotenv").config({ path: ".env" });
 const errorHandler = require("./utils/errorHandler");
 const AppError = require("./utils/appError");
+require("dotenv").config({ path: ".env" });
 
 
 const tourRouter = require("./routers/tourRouter");
@@ -57,6 +57,4 @@ router.route("*").all(notFound)
 // create a error handler that will capture all errors:
 app.use(errorHandler) // last middleware
 
-app.listen(process.env.PORT, () => {
-	console.log("server listening on port " + process.env.PORT);
-});
+module.exports = app;

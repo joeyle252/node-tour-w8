@@ -31,7 +31,7 @@ exports.createUser = async function (req, res) {
 			throw new Error("password and password confirm don't match")
 		}
 		const user = await User.create({ name, password, email });
-		res.json({ status: "success", data: user });
+		res.status(201).json({ status: "success", data: user });
 	} catch (err) {
 		res.status(400).json({ status: "fail", message: err.message });
 	};
