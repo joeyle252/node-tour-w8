@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const User = require("./user");
-const ObjectId = require('mongoose').Types.ObjectId;
+const Review = require("./review");
+
 
 const tourSchema = new mongoose.Schema({
   title: {
@@ -15,7 +16,7 @@ const tourSchema = new mongoose.Schema({
     trim: true,
     minLength: 10
   },
-  organizer: {
+  organizer: { // owner
     type: mongoose.Schema.ObjectId,
     ref: "User",
     required: [true, "Tour must have an organizer"]
@@ -26,7 +27,17 @@ const tourSchema = new mongoose.Schema({
       ref: "User"
     }
   ],
-
+  ratingAverage: {
+    type: Number,
+    default: 0,
+    min: [0, "Rating must be above 0"],
+    max: [5, "Rating must be below 5.0"],
+    set: value => Math.round(value * 10) / 10
+  },
+  ratingQuantity: {
+    type: Number,
+    default: 0
+  },
   // images: [String],
   // imageCover: {
   //   type: String,
@@ -83,8 +94,9 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 
-
-
+tourSchema.post("findOneAndDelete", async function () {
+    await Review.deleteMany({ tour: this._conditions._id })
+})
 
 tourSchema.methods.toJSON = function () {
   const object = this.toObject();
@@ -93,5 +105,4 @@ tourSchema.methods.toJSON = function () {
 };
 
 
-const Tour = mongoose.model("Tour", tourSchema);
-module.exports = Tour;
+module.exports = mongoose.model("Tour", tourSchema);

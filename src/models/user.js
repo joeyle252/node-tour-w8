@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
 }, {
 	timestamps: true,
 	toJSON: { virtuals: true },
-	toObject: { virtuals: false }
+	toObject: { virtuals: true }  // is virtuals included in the obj when do doc.toObject()
 });
 
 userSchema.methods.toJSON = function () {
@@ -44,10 +44,16 @@ userSchema.methods.toJSON = function () {
 
 
 
-
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function (next) { // this here = doc
 	if (!this.isModified("password")) return next();
 	this.password = await bcrypt.hash(this.password, saltRounds);
+	next();
+});
+
+userSchema.pre("findOneAndUpdate", async function (next) { // this here is not a doc. this here = query
+	console.log(this)
+	if (!this._update.password) return next();
+	this._update.password = await bcrypt.hash(this._update.password, saltRounds);
 	next();
 });
 
@@ -58,8 +64,6 @@ userSchema.methods.generateToken = async function () {
 	await user.save();
 	return token;
 };
-
-
 
 userSchema.statics.loginWithEmail = async (email, password) => {
 	const user = await User.findOne({ email: email });

@@ -1,4 +1,6 @@
 const Tour = require("../models/tour");
+const { deleteOne, updateOne } = require("./factories");
+const catchAsync = require("../utils/catchAsync")
 
 
 exports.readTours = async function (req, res) {
@@ -21,20 +23,12 @@ exports.readTour = async (req, res) => {
 	};
 };
 
-exports.createTour = async function (req, res) {
-	try {
-		const tour = await Tour.create({ ...req.body, organizer: req.user._id });
-		res.status(201).json({ status: "success", data: tour });
-	} catch (err) {
-		res.status(400).json({ status: "fail", message: err.message });
-	};
-};
+exports.createTour = catchAsync(async function (req, res, next) {
+	const tour = await Tour.create({ ...req.body, organizer: req.user._id });
+	res.status(201).json({ status: "success", data: tour });
+});
 
-exports.updateTour = async function (req, res) {
-	res.send("ok")
-};
+exports.updateTour = updateOne(Tour)
 
-exports.deleteTour = async function (req, res) {
-	res.send("ok");
-};
+exports.deleteTour = deleteOne(Tour)
 

@@ -4,32 +4,14 @@ const router = new express.Router();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 require("dotenv").config({ path: ".env" });
+const errorHandler = require("./utils/errorHandler");
+const AppError = require("./utils/appError");
 
-const {
-	login,
-	auth,
-	logout,
-	logoutAll } = require("./controllers/authController");
-const {
-	readUsers,
-	readUser,
-	updateUser,
-	createUser,
-	readProfile } = require("./controllers/userController");
-const {
-	readTours,
-	readTour,
-	createTour,
-	updateTour,
-	deleteTour } = require("./controllers/tourController");
-const {
-	readReviews,
-	readReview,
-	updateReview,
-	deleteReview,
-	createReview } = require("./controllers/reviewController");
 
-const checkTour = require("./middlewares/checkTour");
+const tourRouter = require("./routers/tourRouter");
+const reviewRouter = require("./routers/reviewRouter");
+const userRouter = require("./routers/userRouter");
+const authRouter = require("./routers/authRouter");
 
 mongoose.connect(process.env.DB, {
 	useNewUrlParser: true,
@@ -45,50 +27,12 @@ app.use(router);
 
 router.route("/").get((req, res) => { res.send("OK") });
 
-router
-	.route("/tours")
-	.get(readTours)
-	.post(auth, createTour)
 
-router
-	.route("/tours/:id")
-	.get(auth, readTour)
-	.patch(auth, updateTour)
-	.delete(auth, deleteTour);
-
-
-
-// reviews
-
-router
-	.route("/reviews")
-	.get(checkTour, readReviews)
-	.post(auth, checkTour, createReview)
-
-router
-	.route("/reviews/:id")
-	.get(readReview)
-	.patch(auth, updateReview)
-	.delete(auth, deleteReview)
-
-
-// users 
-router
-	.route("/users/me")
-	.get(auth, readProfile)
-	.patch(auth, updateUser)
-
-router.post("/login", login);
-router.get("/logout", auth, logout);
-router.get("/logout/all", auth, logoutAll);
-
-
-router
-	.route("/users")
-	.get(readUsers)
-	.post(createUser);
-
-router.route("/users/:id").get(readUser)
+// tourRouter
+router.use("/tours", tourRouter);
+router.use("/users", userRouter);
+router.use("/auth", authRouter);
+router.use("/tours/:tid/reviews", reviewRouter);
 
 
 // const Cate = require("./models/category.js");
@@ -103,15 +47,15 @@ router.route("/users/:id").get(readUser)
 
 
 // 404 handler
-function notFound(req, res) {
-	res.status(404).send()
+function notFound(req, res, next) {
+	next(new AppError(404, "api not found"))
 }
-router.route("*")
-	.get(notFound)
-	.post(notFound)
-	.patch(notFound)
-	.put(notFound)
-	.delete(notFound)
+
+router.route("*").all(notFound)
+
+
+// create a error handler that will capture all errors:
+app.use(errorHandler) // last middleware
 
 app.listen(process.env.PORT, () => {
 	console.log("server listening on port " + process.env.PORT);

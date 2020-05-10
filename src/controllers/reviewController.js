@@ -1,15 +1,14 @@
 const Review = require("../models/review");
-const ObjectId = require('mongoose').Types.ObjectId;
+const { deleteOne, updateOne } = require("./factories");
 
 
 exports.createReview = async function (req, res) {
   try {
-
     // create review or update existing review
-    const review = await Review.findOneAndUpdate(
-      { user: req.user._id, tour: req.body.tour },
-      { ...req.body, user: req.user._id },
-      { upsert: true, new: true, setDefaultsOnInsert: true });
+    const review = await Review.create( // will call .save()
+      // { user: req.user._id, tour: req.params.tid },
+      { ...req.body, tour: req.params.tid, user: req.user._id })
+    // { upsert: true, new: true, setDefaultsOnInsert: true });
 
     res.status(201).json({ status: "success", data: review })
   } catch (error) {
@@ -19,7 +18,7 @@ exports.createReview = async function (req, res) {
 
 exports.readReviews = async function (req, res) {
   try {
-    const reviews = await Review.find({ tour: req.body.tour });
+    const reviews = await Review.find({ tour: req.params.tid });
     res.json({ status: "success", data: reviews });
   } catch (error) {
     res.status(400).json({ status: "fail", message: error.message });
@@ -29,26 +28,14 @@ exports.readReviews = async function (req, res) {
 exports.readReview = async function (req, res) {
   try {
     const review = await Review.findById(req.params.id).exec();
-    res.json({ status: "success", data: review });
+    res.status(400).json({ status: "fail", message: error.message });
   } catch (error) {
     res.status(400).json({ status: "fail", message: error.message });
   };
 };
 
-exports.updateReview = async function (req, res) {
-  try {
-
-  } catch (error) {
-
-  }
-};
+exports.updateReview = updateOne(Review);
 
 
-exports.deleteReview = async function (req, res) {
-  try {
-
-  } catch (error) {
-
-  }
-};
+exports.deleteReview = deleteOne(Review)
 
